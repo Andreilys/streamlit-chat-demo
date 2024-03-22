@@ -1,6 +1,7 @@
 # Groq Chat Streamlit App
+Original github repo- https://github.com/tonykipkemboi/groq_streamlit_demo/tree/main
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://groqdemo.streamlit.app/)
+[![Streamlit App](https://static.streavimmlit.io/badges/streamlit_badge_black_white.svg)](https://groqdemo.streamlit.app/)
 
 ![Demo App Screenshot](images/groq_demo.png)
 
