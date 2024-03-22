@@ -65,16 +65,14 @@ if st.session_state.selected_model != model_option:
 max_tokens_range = models[model_option]["tokens"]
 
 with col2:
-    # Adjust max_tokens slider dynamically based on the selected model
-    max_tokens = st.slider(
-        "Max Tokens:",
-        min_value=512,  # Minimum value to allow some flexibility
-        max_value=max_tokens_range,
-        # Default value or max allowed if less
-        value=min(32768, max_tokens_range),
-        step=512,
-        help=f"Adjust the maximum number of tokens (words) for the model's response. Max for selected model: {max_tokens_range}"
+    # Display and allow editing of the system prompt
+    st.session_state.system_prompt = st.text_area(
+        "System Prompt:",
+        value=st.session_state.system_prompt,
+        height=100,
+        help="Edit the system prompt to set the context for the conversation"
     )
+
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
@@ -110,7 +108,7 @@ if prompt := st.chat_input("Enter your prompt here..."):
                     for m in st.session_state.messages
                 ]
             ],
-            max_tokens=max_tokens,
+            max_tokens=2000,
             stream=True
         )
 
