@@ -3,20 +3,8 @@ from typing import Generator
 from groq import Groq
 
 st.set_page_config(page_icon="💬", layout="wide",
-                   page_title="Groq Goes Brrrrrrrr...")
+                   page_title="Groq")
 
-
-def icon(emoji: str):
-    """Shows an emoji as a Notion-style page icon."""
-    st.write(
-        f'<span style="font-size: 78px; line-height: 1">{emoji}</span>',
-        unsafe_allow_html=True,
-    )
-
-
-icon("🏎️")
-
-st.subheader("Groq Chat Streamlit App", divider="rainbow", anchor=False)
 
 client = Groq(
     api_key=st.secrets["GROQ_API_KEY"],
@@ -28,6 +16,28 @@ if "messages" not in st.session_state:
 
 if "selected_model" not in st.session_state:
     st.session_state.selected_model = None
+
+if "system_prompt" not in st.session_state:
+    st.session_state.system_prompt = st.secrets["SYSTEM_PROMPT"]
+
+# Password gate
+if "password_correct" not in st.session_state:
+    st.session_state.password_correct = False
+
+streamlit_password = st.secrets["STREAMLIT_PASSWORD"]
+if not st.session_state.password_correct:
+    password_input = st.text_input("Enter the password:", type="password")
+    if password_input == streamlit_password:
+        st.session_state.password_correct = True
+    else:
+        if not password_input:
+            st.warning("Enter password.")
+            st.stop()
+        else:
+            st.warning("Incorrect password. Please try again.")
+            st.stop()
+
+st.subheader("Mia AI Chat Streamlit App", divider="rainbow", anchor=False)
 
 # Define model details
 models = {
@@ -91,11 +101,14 @@ if prompt := st.chat_input("Enter your prompt here..."):
         chat_completion = client.chat.completions.create(
             model=model_option,
             messages=[
-                {
-                    "role": m["role"],
-                    "content": m["content"]
-                }
-                for m in st.session_state.messages
+                {"role": "system", "content": st.session_state.system_prompt},
+                *[
+                    {
+                        "role": m["role"],
+                        "content": m["content"]
+                    }
+                    for m in st.session_state.messages
+                ]
             ],
             max_tokens=max_tokens,
             stream=True
